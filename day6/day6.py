@@ -58,7 +58,6 @@ def find_size_of_close_region():
     num_close = 0
     for x in range(min_x - 9999, max_x + 9999 + 1):
         for y in range(min_y - 9999, max_y + 9999 + 1):
-            print('x: {}, y: {}'.format(x, y))
             dist_sum = 0
             for dest in destinations:
                 dist_sum += manhattan(dest, x, y)
