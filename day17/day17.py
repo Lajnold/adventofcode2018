@@ -59,7 +59,7 @@ def load_input():
         return parse_input(lines)
 
 
-def write_to_file(clay, water):
+def write_map_to_file(clay, water):
     min_x = min(clay.x for clay in clay)
     max_x = max(clay.x for clay in clay)
     min_y = min(clay.y for clay in clay)
@@ -79,7 +79,6 @@ def write_to_file(clay, water):
             f.write('\n')
 
 
-
 def part1():
     clay = set(load_input())
     min_y = min(clay.y for clay in clay)
@@ -95,8 +94,11 @@ def part1():
         expander = None
         source = source.down()
         while source and source.y <= max_y:
-            if source in clay or source in water:
+            if source in clay:
                 expander = source.up()
+                source = None
+            elif source in water:
+                expander = source
                 source = None
             else:
                 if source.y >= min_y:
@@ -110,16 +112,14 @@ def part1():
                 if left_expander in clay:
                     left_clay = True
                     left_expander = None
-                elif left_expander in water:
-                    left_expander = None
                 else:
-                    if left_expander.y >= min_y:
-                        water.add(left_expander)
-
                     if left_expander.down() in clay or left_expander.down() in water:
+                        if left_expander.y >= min_y:
+                            water.add(left_expander)
                         left_expander = left_expander.left()
                     else:
-                        sources.append(left_expander)
+                        if left_expander.right().down() in clay:
+                            sources.append(left_expander.up())
                         left_expander = None
 
             right_clay = False
@@ -128,24 +128,24 @@ def part1():
                 if right_expander in clay:
                     right_clay = True
                     right_expander = None
-                elif right_expander in water:
-                    right_expander = None
                 else:
-                    if right_expander.y >= min_y:
-                        water.add(right_expander)
-
                     if right_expander.down() in clay or right_expander.down() in water:
+                        if right_expander.y >= min_y:
+                            water.add(right_expander)
                         right_expander = right_expander.right()
                     else:
-                        sources.append(right_expander)
+                        if right_expander.left().down() in clay:
+                            sources.append(right_expander.up())
                         right_expander = None
 
             if left_clay and right_clay:
                 expander = expander.up()
+                if expander.y >= min_y:
+                    water.add(expander)
             else:
                 expander = None
 
-    write_to_file(clay, water)
+    write_map_to_file(clay, water)
     print(f'Part 1: {len(water)}')
 
 
